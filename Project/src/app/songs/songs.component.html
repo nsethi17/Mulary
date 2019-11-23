@@ -1,0 +1,9 @@
+<h1>Available Songs</h1>
+
+<ol *ngIf="songs">
+  <li *ngFor="let item of songs">
+    <p class="name">{{ item.first_name }}</p>
+    <p class="type">{{ item.dob }}</p>
+    <p class="dueDate">{{ item.email }}</p>
+  </li>
+</ol>

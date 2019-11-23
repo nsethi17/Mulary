@@ -1,0 +1,30 @@
+{
+  "name": "lab5",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "dependencies": {
+    "@angular/cli": "^8.3.19",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "firebase": "^7.5.0",
+    "firebase-admin": "^8.8.0",
+    "g": "^2.0.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nsethi17/ece9065-nsethi8-project.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nsethi17/ece9065-nsethi8-project/issues"
+  },
+  "homepage": "https://github.com/nsethi17/ece9065-nsethi8-project#readme"
+}
