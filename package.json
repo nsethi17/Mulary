@@ -10,7 +10,8 @@
     "express": "^4.17.1",
     "firebase": "^7.5.0",
     "firebase-admin": "^8.8.0",
-    "g": "^2.0.1"
+    "g": "^2.0.1",
+    "mongoose": "^5.7.12"
   },
   "devDependencies": {},
   "scripts": {

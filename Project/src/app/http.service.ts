@@ -10,6 +10,6 @@ export class HttpService {
   constructor(private http: HttpClient) { }
 
   getUser(){
-    return this.http.get('http://localhost:1234/api/open/user');
+    return this.http.get('http://localhost:1234/api/open/Users');
   }
 }
