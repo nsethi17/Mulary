@@ -2,8 +2,10 @@
 
 <ol *ngIf="songs">
   <li *ngFor="let item of songs">
-    <p class="name">{{ item.first_name }}</p>
-    <p class="type">{{ item.dob }}</p>
-    <p class="dueDate">{{ item.email }}</p>
+    <p class="title">{{ item.title }}</p>
+    <p class="artist">{{ item.artist }}</p>
+    <p class="album">{{ item.album }}</p>
+    <p class="year">{{ item.year }}</p>
+    <p class="genre">{{ item.genre }}</p>
   </li>
 </ol>

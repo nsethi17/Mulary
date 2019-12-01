@@ -7,17 +7,17 @@ import { HttpService } from '../http.service';
 })
 export class SongsComponent implements OnInit {
   items:  any = [];
-  users: any;
+  songs: any;
   test:any = {} ;
 
   constructor(private _http: HttpService) { }
 
   ngOnInit() {
-    this._http.getUser().subscribe(data =>{
+    this._http.getSongs().subscribe(data =>{
       this.items = data
       this.items = Array.of(this.items)
-      this.users = this.items[0].result
-      console.log(this.users)
+      this.songs = this.items[0].result
+      console.log(this.songs)
     });
   }
 
