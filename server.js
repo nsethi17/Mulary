@@ -55,9 +55,9 @@ app.post("/api/open/Songs",(req,res) =>
     {
         if(err) console.log(err);
         let db_obj =db.db("Web_proj");
-        let query = req.body;
+        let query = req.body.Tags;
         console.log(query)
-        db_obj.collection("Songs").find(query,{projection:{_id:0}}).toArray(function(err,result)
+        db_obj.collection("Songs").find({$text: {$search:query}},{projection:{_id:0}}).toArray(function(err,result)
         {
             if (err) console.log(err);
             res.send({'result':result});

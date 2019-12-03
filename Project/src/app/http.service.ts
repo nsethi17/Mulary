@@ -14,7 +14,8 @@ export class HttpService {
   }
   searchResult(keyword: any):Observable<any>{
     let kw: any = {};
-    kw.title=keyword;
+    kw.Tags=keyword;
+    
     return this.http.post<any>('http://localhost:1234/api/open/Songs',kw,{
       headers: new HttpHeaders( {
         'Content-Type': 'application/json'

@@ -25,7 +25,6 @@ export class SongsComponent implements OnInit {
   //searchinf songs based on a keyword 
   search_songs() {
     let keyword =(document.getElementById("search_song") as HTMLInputElement).value;
-    console.log(typeof keyword)
     if(keyword!= "") // 
     { let tag = document.getElementById("search_tag");
       tag.innerHTML= "Showing Results for: "+ keyword;
@@ -39,7 +38,6 @@ export class SongsComponent implements OnInit {
       }
 
       );
-      console.log(keyword);
     }
     else{
       document.getElementById("search_tag").style.display="none";
