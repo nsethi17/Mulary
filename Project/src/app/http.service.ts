@@ -12,4 +12,14 @@ export class HttpService {
   getSongs(){
     return this.http.get('http://localhost:1234/api/open/Songs');
   }
+  searchResult(keyword: any):Observable<any>{
+    let kw: any = {};
+    kw.title=keyword;
+    return this.http.post<any>('http://localhost:1234/api/open/Songs',kw,{
+      headers: new HttpHeaders( {
+        'Content-Type': 'application/json'
+      }),
+      observe:"body"
+    })
+  }
 }

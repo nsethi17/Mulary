@@ -2,13 +2,21 @@
 require("dotenv").config()
 const express = require('express');
 const bodyParser = require('body-parser');
-var cors = require('cors');
-
+const request = require('request')
+var cors = require('cors')
 //initializing express app
+
 const app = express();
 app.use(express.json({limit:'1mb'}));
-//for cross origin reference
 app.use(cors());
+
+
+// app.use((req,res,next) =>
+// {
+//     express.json({limit:'1mb'});
+//     res.header('Access-Control-Allow-Origin','*');
+//     next();
+// });
 
 
 var MongoClient = require('mongodb').MongoClient;
@@ -20,7 +28,9 @@ const jwt = require('jsonwebtoken');
 
 
 // paths possible => /api/open , /api/secure , /api/admin
-app.get("/api/open/Songs",(req,res) =>{
+app.get("/api/open/Songs",(req,res) =>
+{ //followed w3schools tutorial for making requests
+    // request({url:'http://localhost:1234/api/open/Songs'})
   MongoClient.connect(url, function(err, db){
     if (err) console.log(err);
     let db_obj =db.db("Web_proj");
@@ -34,8 +44,30 @@ app.get("/api/open/Songs",(req,res) =>{
         console.log(result);
         db.close();
     });
+  
 });
+    
+});
+//followed w3schools tutorial for making requests
+app.post("/api/open/Songs",(req,res) =>
+{    //request({url:'http://localhost:1234/api/open/Songs'})
+    MongoClient.connect(url, function(err,db)
+    {
+        if(err) console.log(err);
+        let db_obj =db.db("Web_proj");
+        let query = req.body;
+        console.log(query)
+        db_obj.collection("Songs").find(query,{projection:{_id:0}}).toArray(function(err,result)
+        {
+            if (err) console.log(err);
+            res.send({'result':result});
+            db.close();
 
+
+        });
+
+    });
+    
 });
 
 //process.env.PORT ||
