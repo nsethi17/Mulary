@@ -43,8 +43,15 @@ export class SongsComponent implements OnInit {
     }
     else{
       document.getElementById("search_tag").style.display="none";
+      this._http.getSongs().subscribe(data =>{
+        this.items = data
+        this.items = Array.of(this.items)
+        this.songs = this.items[0].result
+        console.log(this.songs)
+      
+      });
     }
-    
+
   }
 }
 
