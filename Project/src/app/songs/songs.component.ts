@@ -23,13 +23,13 @@ export class SongsComponent implements OnInit {
     });
   }
   //searchinf songs based on a keyword 
-  search_songs() {
+  search_songs() 
+  {
     let keyword =(document.getElementById("search_song") as HTMLInputElement).value;
     if(keyword!= "") // 
     { let tag = document.getElementById("search_tag");
       tag.innerHTML= "Showing Results for: "+ keyword;
       tag.style.display = "inline";
-      
       this._http.searchResult(keyword).subscribe(test =>{
         this.items = test
         this.items = Array.of(this.items)
@@ -51,6 +51,12 @@ export class SongsComponent implements OnInit {
     }
 
   }
+  getReviews()
+  {
+    console.log("hi")
+
+  }
 }
+
 
   
