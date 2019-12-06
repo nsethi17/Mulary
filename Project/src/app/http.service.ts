@@ -36,5 +36,17 @@ export class HttpService {
     })
 
   }
+  user_signup(u:any):Observable<any>{
+    let user = u;
+    return this.http.put<any>('http://localhost:1234/api/register',user,{
+      headers: new HttpHeaders( {
+        'Content-Type': 'application/json'
+      }),
+      observe:"body"
+    })
+
+  }
+
+ 
 
 }

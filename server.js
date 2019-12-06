@@ -43,7 +43,7 @@ app.post("/api/login",async (req,res)=>
             if (err) res.send("user not found");
             try{
                 if(await bcrypt.compare(query.password,result.password)){
-                    res.send({'login':"success"});
+                    res.send({'login':"success",'status':result.status});
                 }
                 else{
                     res.send({'login':"failed"});
@@ -65,7 +65,7 @@ app.post("/api/login",async (req,res)=>
 // paths possible => /api/open , /api/secure , /api/admin
 app.get("/api/open/Songs",(req,res) =>
 { //followed w3schools tutorial for making requests
-    // request({url:'http://localhost:1234/api/open/Songs'})
+    
   MongoClient.connect(url, function(err, db){
     if (err) console.log(err);
     let db_obj =db.db("Web_proj");
@@ -85,7 +85,7 @@ app.get("/api/open/Songs",(req,res) =>
 });
 //followed w3schools tutorial for making requests
 app.post("/api/open/Songs/search",(req,res) =>//to search songs 
-{    //request({url:'http://localhost:1234/api/open/Songs'})
+{    
     MongoClient.connect(url, function(err,db)
     {
         if(err) console.log(err);
@@ -117,37 +117,64 @@ app.put("/api/register",async(req,res)=>
             if (err) throw err;
             let db_obj = db.db("Web_proj");
             let new_user = {email:req.body.email, password: hashed_password}
-            db_obj.collection("temp_Users").insertOne(new_user,function(err, result){
-                if (err) console.log(err);
-                res.json({status: "Success"});
-                db.close();
-            });
-            
-            //email verification
-            link="http://localhost:4200/api/open/songs/"+hashed_password;
-            mailOptions={
-                to : req.body.email,
-                subject : "Please confirm your Email account",
-                html : "Hello,<br> Please Click on the link to verify your email.<br><a href="+link+">Click here to verify</a>"
+            db_obj.collection("temp_Users").findOne({email:{$eq:new_user.email}},function(err,result){
+                if(result!=null && new_user.email == result.email)
+            {   
+                res.send({"result":"user exists"})
             }
-            console.log(mailOptions);
-            smtpTransport.sendMail(mailOptions, function(error, response){
-             if(error){
-                    console.log(error);
-                res.end("error");
-             }else{
-                    console.log("Message sent: " + response.message);
-                res.end("sent");
-                 }
+                else
+                {
+                    console.log(new_user.email)
+                    db_obj.collection("temp_Users").insertOne(new_user,function(err, result2){
+                    if (err) console.log(err);
+                    res.send({"result": "success"});
+                    db.close();
                 });
-                      
+                
+                //email verification
+                link="http://localhost:1234/api/verify?hash="+hashed_password;
+                mailOptions={
+                    to : req.body.email,
+                    subject : "Please confirm your Email account",
+                    html : "Hello,<br> Please Click on the link to verify your email.<br><a href="+link+">Click here to verify</a>"
+                }
+                console.log(mailOptions);
+                smtpTransport.sendMail(mailOptions, function(error, response){
+                if(error){
+                    console.log(error);
+                    res.end("error");
+                }else{
+                        console.log("Message sent: " + response.message);
+                        res.Send("sent");
+                    }
+                    });
+                }
+            })                      
            
-        });
+        }); 
     }
     catch{
         if(err) throw err;
     }
    
+});
+
+app.get("/api/verify",(req,res)=>{
+
+    MongoClient.connect(url, function(err, db){
+        if (err) console.log(err);
+        let db_obj =db.db("Web_proj");
+        console.log(req.query.hash)
+    
+        db_obj.collection("temp_Users").updateOne({password:{$eq:req.query.hash}},{$set:{status:"active"}},function(err,result){
+            if(err) throw err;
+            res.writeHead(301,
+                {Location: 'http://localhost:4200/'}
+              );
+              res.end();
+        });
+
+    });
 });
 
 //process.env.PORT ||

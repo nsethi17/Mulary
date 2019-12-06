@@ -9,13 +9,13 @@ import { HttpService } from '../http.service';
 })
 export class HomeComponent implements OnInit {
   constructor(private _http: HttpService) {}
-  test: String 
+  test: any 
 
   ngOnInit() {
     let log_btn = document.getElementById("login_btn");
     log_btn.addEventListener("click",this.login_check);
     let signup_btn = document.getElementById("signup_btn");
-    signup_btn.addEventListener("click",newUserDetails);
+    signup_btn.addEventListener("click",this.newUserDetails);
   }
 //user login
     login_check =() => {
@@ -30,10 +30,15 @@ export class HomeComponent implements OnInit {
         this._http.user_login(u).subscribe(test =>{ //confirming if user exists in db or not
           if(test.login == "success"){
             login_flag = true;
-            if(login_flag){
+            if(login_flag && test.status =="active"){
               document.getElementById("user_login").style.display = "none";
               document.getElementById("parts_logout").style.display = "block";
         
+            }
+            else{
+              window.alert('Please verify your email')
+              document.getElementById("user_login").style.display = "none";
+              document.getElementById("parts_logout").style.display = "block";
             }
           }
           else{
@@ -48,8 +53,51 @@ export class HomeComponent implements OnInit {
   
   }
 
+  //New User Signup
+  newUserDetails = () => {
+    let w = document.getElementById("signup_pop");
+    let btn = document.getElementById("signup_confirm");
+    w.style.display="block";
+    
+    window.onclick = function(event) {
+      if (event.target == w) {
+        w.style.display = "none";
+      }
+    }
+    btn.onclick= () => { 
+  
+      let nuemail = (document.getElementById("nuemail") as HTMLInputElement).value;
+      let nupassword = (document.getElementById("nupassword") as HTMLInputElement).value;
+      let u = {email:nuemail, password:nupassword, status:"inactive"}
+      let em = email_validation(nuemail);
+      let pw = password_Check(nupassword);
+      let login_flag = false;
+      if(em && pw){
+        
+
+        this._http.user_signup(u).subscribe(test =>{ 
+          if(test.result == "success"){
+            login_flag = true;
+            if(login_flag){
+              window.alert("A link has been sent to your email, please verify!")
+              document.getElementById("user_login").style.display = "none";
+              document.getElementById("parts_logout").style.display = "block";
+              w.style.display = "none";
+        
+            }
+          }
+          else{
+            window.alert("User already exists")
+            }
+      
+          
+        });
+  
+      }
+    }
+  }
+
 }
-var login_flag = false//login flag 
 
 
 function email_validation(email){
@@ -75,31 +123,3 @@ function password_Check (password){
     return true;
   }
 }
-
-function newUserDetails(){
-  let w = document.getElementById("signup_pop");
-  let btn = document.getElementById("signup_confirm");
-  w.style.display="block";
-  
-  window.onclick = function(event) {
-    if (event.target == w) {
-      w.style.display = "none";
-    }
-  }
-  btn.onclick= () => { 
-
-    let nuemail = (document.getElementById("nuemail") as HTMLInputElement).value;
-    let nupassword = (document.getElementById("nupassword") as HTMLInputElement).value;
-    console.log(nuemail)
-
-    let em = email_validation(nuemail);
-    let pw = password_Check(nupassword);
-    if(em && pw){
-      document.getElementById("user_login").style.display = "none";
-      document.getElementById("parts_logout").style.display = "block";
-      w.style.display = "none";
-
-    }
-  }
-}
-
