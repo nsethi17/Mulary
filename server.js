@@ -1,4 +1,5 @@
 // Packages required
+require('dotenv').config()
 const express = require('express');
 const bodyParser = require('body-parser');
 var cors = require('cors')
@@ -37,18 +38,21 @@ app.post("/api/login",async (req,res)=>
         if(err) console.log(err);
         let db_obj =db.db("Web_proj");
         let query = req.body;
-        console.log(query)
-        db_obj.collection("temp_Users").findOne({email:{$eq:query.email}},async function(err,result)
+        
+        db_obj.collection("temp_Users").findOne({email:{$eq:query.email}}, async function(err,result)
         {
             if (err) res.send("user not found");
+            
             try{
-                if(await bcrypt.compare(query.password,result.password)){
-                    res.send({'login':"success",'status':result.status});
+                if( await bcrypt.compare(query.password,result.password)){
+                    let tok = jwtCreate(query.email);
+                    res.send({'login':'success','status':result.status,'token':tok});
                 }
                 else{
                     res.send({'login':"failed"});
                 }
-            }catch{
+            }
+            catch{
                 res.send({'login':"Error"})
             }
             
@@ -69,7 +73,6 @@ app.get("/api/open/Songs",(req,res) =>
   MongoClient.connect(url, function(err, db){
     if (err) console.log(err);
     let db_obj =db.db("Web_proj");
-    console.log(process.env.webproj_jwtkey)
 
     db_obj.collection("Songs").find({},{projection:{_id:0}}).toArray(function(err,result){
         if (err) console.log( err);
@@ -81,8 +84,13 @@ app.get("/api/open/Songs",(req,res) =>
     });
   
 });
-    
 });
+
+app.get("/api/try",jwtAuth,(req,res)=>{
+    console.log(req.username)
+    res.send({"result":"success"})
+})
+
 //followed w3schools tutorial for making requests
 app.post("/api/open/Songs/search",(req,res) =>//to search songs 
 {    
@@ -177,6 +185,24 @@ app.get("/api/verify",(req,res)=>{
     });
 });
 
+function jwtCreate(user){
+    let token = jwt.sign(user,process.env.jwt_key);
+    return token;
+
+}
+// followed youtube tutorial- https://www.youtube.com/watch?v=mbsmsi7l3r4 for jwt
+// verifying token 
+function jwtAuth(req,res,next){
+    const header = req.headers['authorization'];
+    let token = header && header.split(":")[1];
+    if (token ==null) res.sendStatus(401);
+    jwt.verify(token,process.env.jwt_key,(err,username)=>{
+        if(err) res.sendStatus(403);
+        req.username = username;
+        next(); 
+    })
+
+}
 //process.env.PORT ||
 const port =  1234;
 app.listen(port, () => {
