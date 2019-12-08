@@ -47,6 +47,18 @@ export class HttpService {
 
   }
 
+  postReview(rev:any,song:any){
+    let review = {"review":rev,"song":song}
+    return this.http.post<any>('http://localhost:1234/api/secure/review',review,{
+      headers: new HttpHeaders( {
+        'Content-Type': 'application/json',
+        'Authorization':'Bearer:'+sessionStorage.getItem("access-token")
+      }),
+      observe:"body"
+    })
+
+  }
+
  
 
 }

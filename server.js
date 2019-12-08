@@ -85,10 +85,25 @@ app.get("/api/open/Songs",(req,res) =>
   
 });
 });
+//poating review
+app.post("/api/secure/review",jwtAuth,(req,res)=>{
+    console.log(req.username, req.body.review)
+    MongoClient.connect(url, function(err,db)
+    {
+        if(err) console.log(err);
+        let db_obj =db.db("Web_proj");  
+        let new_review = {title: req.body.song, user:req.username,rating:"5",review:req.body.review}
+        console.log(new_review)
+        db_obj.collection("Songs").update({title: {$eq:new_review.title}},{$inc:{num_revs:1}});
+        db_obj.collection("Reviews").insertOne(new_review,function(err, result){
+            if (err) console.log(err);
+            res.send({"result": "success"});
+            db.close();
+        });
 
-app.get("/api/try",jwtAuth,(req,res)=>{
-    console.log(req.username)
-    res.send({"result":"success"})
+      
+
+    });
 })
 
 //followed w3schools tutorial for making requests

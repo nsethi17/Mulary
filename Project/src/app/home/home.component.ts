@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { EmailValidator } from '@angular/forms';
 import { HttpService } from '../http.service';
-
+var login_flag = false
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -9,36 +9,46 @@ import { HttpService } from '../http.service';
 })
 export class HomeComponent implements OnInit {
   constructor(private _http: HttpService) {}
-  test: any 
-
+  test: any
+  
   ngOnInit() {
     let log_btn = document.getElementById("login_btn");
     log_btn.addEventListener("click",this.login_check);
     let signup_btn = document.getElementById("signup_btn");
     signup_btn.addEventListener("click",this.newUserDetails);
+    this.display();
+    if(!login_flag){
+    sessionStorage.setItem('login_flag','false')
+    }
+  }
+
+  display(){ 
+    if(sessionStorage.getItem('login_flag')=='true'){
+      document.getElementById("user_login").style.display = "none";
+      document.getElementById("parts_logout").style.display = "block";     
+    }
+
   }
 //user login
     login_check =() => {
-
       let email = (document.getElementById("email") as HTMLInputElement).value;
       let password = (document.getElementById("password") as HTMLInputElement).value;
       let ev = email_validation(email);
       let pc =password_Check(password);
       if(ev && pc){
         let u = {email: email, password: password}
-        let login_flag = false;
         this._http.user_login(u).subscribe(test =>{ //confirming if user exists in db or not
           if(test.login == "success"){
-            login_flag = true;
-            if(login_flag && test.status =="active"){
-              document.getElementById("user_login").style.display = "none";
-              document.getElementById("parts_logout").style.display = "block";
+              login_flag = true;
+             sessionStorage.setItem("login_flag","true");
+            if(sessionStorage.getItem("login_flag") =="true" && test.status =="active"){
+              sessionStorage.setItem("access-token",test.token);
+              this.display()
         
             }
             else{
               window.alert('Please verify your email')
-              document.getElementById("user_login").style.display = "none";
-              document.getElementById("parts_logout").style.display = "block";
+              this.display()
             }
           }
           else{
@@ -71,14 +81,13 @@ export class HomeComponent implements OnInit {
       let u = {email:nuemail, password:nupassword, status:"inactive"}
       let em = email_validation(nuemail);
       let pw = password_Check(nupassword);
-      let login_flag = false;
       if(em && pw){
         
 
         this._http.user_signup(u).subscribe(test =>{ 
           if(test.result == "success"){
-            login_flag = true;
-            if(login_flag){
+            sessionStorage.setItem("loginflag","true")
+            if(sessionStorage.getItem("login_flag")=="true"){
               window.alert("A link has been sent to your email, please verify!")
               document.getElementById("user_login").style.display = "none";
               document.getElementById("parts_logout").style.display = "block";
@@ -98,7 +107,6 @@ export class HomeComponent implements OnInit {
   }
 
 }
-
 
 function email_validation(email){
     //username sanitization

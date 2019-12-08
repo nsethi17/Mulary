@@ -5,6 +5,7 @@
   "main": "server.js",
   "dependencies": {
     "@angular/cli": "^8.3.20",
+    "@types/angular": "^1.6.57",
     "bcrypt": "^3.0.7",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
