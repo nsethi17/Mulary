@@ -21,10 +21,10 @@ export class SongsComponent implements OnInit, AfterViewChecked {
         }
       //console.log(aob.item(0))        
       };
-      
+     document.getElementById("ausers").style.display="block"
   }
  
-
+  timer: any 
   items:  any = [];
   songs: any;
   test:any =[] ;
@@ -36,7 +36,7 @@ export class SongsComponent implements OnInit, AfterViewChecked {
    this.getSongs() 
   }
  
- 
+ // gettings songs using GET method
   getSongs() {
 
     this._http.getSongs().subscribe(data =>{
@@ -53,7 +53,7 @@ export class SongsComponent implements OnInit, AfterViewChecked {
  
   
   
-  //searching songs based on a keyword 
+  //searching songs based on a keyword  using POST method
   search_songs() 
   { 
     let keyword =(document.getElementById("search_song") as HTMLInputElement).value;
@@ -87,12 +87,37 @@ export class SongsComponent implements OnInit, AfterViewChecked {
     console.log("hi")
 
   }
-  addReview(song){
+  addReview(song){ // add option to show review using POST method
     let rev = window.prompt("What are your views?")
     let sname = song;
     this._http.postReview(rev,song).subscribe(data =>{
-      console.log("rev posted")
+      if(data.result="success"){
+        window.alert("review posted")
+      }
     })
+  }
+
+// adding songs using POST method
+  addSong()
+  { 
+    let title = window.prompt("Title of the song")
+    let artist = window.prompt("Name of the artist")
+    if (title =="" || title == null ||artist == "" || artist =="null"){
+      window.alert("Title and artist are mandatory fields")
+    }
+    else{
+      let album = window.prompt("Name of the album")
+      let year = window.prompt("Name of the year")
+      let genre = window.prompt("Name of the genre")
+      this._http.addsong(title,artist,album,year,genre).subscribe(data =>{
+        if(data.result="success"){
+          window.alert("1 song added")
+          setInterval(()=>{this.getSongs()},1000)
+        }
+      })
+    }
+
+
   }
   
 }

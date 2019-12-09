@@ -1,6 +1,7 @@
 <h1>Available Songs</h1>
 <p><input type="text"  placeholder="Search a song" id="search_song" (change) = "search_songs()"><br>
 <strong style="display: none;" id="search_tag"></strong>
+
 </p>
 <ol *ngIf="songs">
   <li *ngFor="let item of songs">
@@ -12,5 +13,9 @@
     <a role="button"  (click)="getReviews()">More Info</a>
     <button id="rev_btn" class="post_rev" type="button" style="display: none;" (click)="addReview(item.title)" >Add Review</button>
   </li>
+  
 </ol>
+<div id="ausers" style="display: none;">
+<button id="addsong_btn" type="button" (click)="addSong()">Add Song</button>
+</div>
 

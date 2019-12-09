@@ -59,6 +59,18 @@ export class HttpService {
 
   }
 
+  addsong(t,a,al,y,g){
+    let new_song = {"title":t,"artist":a,"album":al,"year":y,"genre":g}
+    return this.http.post<any>('http://localhost:1234/api/secure/add_song',new_song,{
+      headers: new HttpHeaders( {
+        'Content-Type': 'application/json',
+        'Authorization':'Bearer:'+sessionStorage.getItem("access-token")
+      }),
+      observe:"body"
+    })
+
+  }
+
  
 
 }

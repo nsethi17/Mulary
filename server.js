@@ -65,68 +65,6 @@ app.post("/api/login",async (req,res)=>
 
 });
 
-
-// paths possible => /api/open , /api/secure , /api/admin
-app.get("/api/open/Songs",(req,res) =>
-{ //followed w3schools tutorial for making requests
-    
-  MongoClient.connect(url, function(err, db){
-    if (err) console.log(err);
-    let db_obj =db.db("Web_proj");
-
-    db_obj.collection("Songs").find({},{projection:{_id:0}}).toArray(function(err,result){
-        if (err) console.log( err);
-       // const token = jwt.sign(result,process.env.webproj_jwtkey);
-        //console.log(token);
-        res.send({'result':result});
-        console.log(result);
-        db.close();
-    });
-  
-});
-});
-//poating review
-app.post("/api/secure/review",jwtAuth,(req,res)=>{
-    console.log(req.username, req.body.review)
-    MongoClient.connect(url, function(err,db)
-    {
-        if(err) console.log(err);
-        let db_obj =db.db("Web_proj");  
-        let new_review = {title: req.body.song, user:req.username,rating:"5",review:req.body.review}
-        console.log(new_review)
-        db_obj.collection("Songs").update({title: {$eq:new_review.title}},{$inc:{num_revs:1}});
-        db_obj.collection("Reviews").insertOne(new_review,function(err, result){
-            if (err) console.log(err);
-            res.send({"result": "success"});
-            db.close();
-        });
-
-      
-
-    });
-})
-
-//followed w3schools tutorial for making requests
-app.post("/api/open/Songs/search",(req,res) =>//to search songs 
-{    
-    MongoClient.connect(url, function(err,db)
-    {
-        if(err) console.log(err);
-        let db_obj =db.db("Web_proj");
-        let query = req.body.Tags;
-        console.log(query)
-        db_obj.collection("Songs").find({$text: {$search:query}},{projection:{_id:0}}).toArray(function(err,result)
-        {
-            if (err) console.log(err);
-            res.send({'result':result});
-            db.close();
-
-
-        });
-
-    });
-    
-});
 //creating a user  (followed a youtube tutorial-https://www.youtube.com/watch?v=Ud5xKCYQTjM)
 app.put("/api/register",async(req,res)=>
 {
@@ -199,6 +137,93 @@ app.get("/api/verify",(req,res)=>{
 
     });
 });
+
+
+// paths possible => /api/open , /api/secure , /api/admin
+app.get("/api/open/Songs",(req,res) =>
+{ //followed w3schools tutorial for making requests
+    
+  MongoClient.connect(url, function(err, db){
+    if (err) console.log(err);
+    let db_obj =db.db("Web_proj");
+
+    db_obj.collection("Songs").find({},{projection:{_id:0}}).toArray(function(err,result){
+        if (err) console.log( err);
+       // const token = jwt.sign(result,process.env.webproj_jwtkey);
+        //console.log(token);
+        res.send({'result':result});
+        console.log(result);
+        db.close();
+    });
+  
+});
+});
+
+
+//followed w3schools tutorial for making requests
+app.post("/api/open/Songs/search",(req,res) =>//to search songs 
+{    
+    MongoClient.connect(url, function(err,db)
+    {
+        if(err) console.log(err);
+        let db_obj =db.db("Web_proj");
+        let query = req.body.Tags;
+        console.log(query)
+        db_obj.collection("Songs").find({$text: {$search:query}},{projection:{_id:0}}).toArray(function(err,result)
+        {
+            if (err) console.log(err);
+            res.send({'result':result});
+            db.close();
+
+
+        });
+
+    });
+    
+});
+
+
+//posting review
+app.post("/api/secure/review",jwtAuth,(req,res)=>{
+    console.log(req.username, req.body.review)
+    MongoClient.connect(url, function(err,db)
+    {
+        if(err) console.log(err);
+        let db_obj =db.db("Web_proj");  
+        let new_review = {title: req.body.song, user:req.username,rating:"5",review:req.body.review}
+        console.log(new_review)
+        db_obj.collection("Songs").update({title: {$eq:new_review.title}},{$inc:{num_revs:1}});
+        db_obj.collection("Reviews").insertOne(new_review,function(err, result){
+            if (err) console.log(err);
+            res.send({"result": "success"});
+            db.close();
+        });
+
+      
+
+    });
+})
+
+//adding new songs
+//posting review
+app.post("/api/secure/add_song",jwtAuth,(req,res)=>{
+    MongoClient.connect(url, function(err,db)
+    {   let tags = [req.body.title,req.body.artist,req.body.album,req.body.year,req.body.genre]
+        if(err) console.log(err);
+        let db_obj =db.db("Web_proj");  
+        let new_song = req.body//{title: req.body.song, user:req.username,rating:"5",review:req.body.review}
+        new_song.Tags =tags;
+        db_obj.collection("Songs").insertOne(new_song,function(err, result){
+            if (err) console.log(err);
+            res.send({"result": "success"});
+            db.close();
+        });
+
+      
+
+    });
+})
+
 
 function jwtCreate(user){
     let token = jwt.sign(user,process.env.jwt_key);
