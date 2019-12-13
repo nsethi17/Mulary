@@ -5,6 +5,7 @@ import { HomeComponent } from '../home/home.component';
 import { of } from 'rxjs';
 import { __await } from 'tslib';
 import { AngularWaitBarrier } from 'blocking-proxy/built/lib/angular_wait_barrier';
+import { Input } from '@angular/compiler/src/core';
 @Component({
   selector: 'app-songs',
   templateUrl: './songs.component.html',
@@ -57,19 +58,25 @@ export class SongsComponent implements OnInit, AfterViewChecked {
   search_songs() 
   { 
     let keyword =(document.getElementById("search_song") as HTMLInputElement).value;
-    if(keyword!= "") // 
-    { let tag = document.getElementById("search_tag");
-      tag.innerHTML= "Showing Results for: "+ keyword;
-      tag.style.display = "inline";
-      this._http.searchResult(keyword).subscribe(test =>{
-        this.items = test
-        this.items = Array.of(this.items)
-        this.songs  =this.items[0].result
-        console.log(this.songs)
-      }
+    let ip = [keyword]
+    if(keyword!= "") {
+      if (sanitized_input(ip)){ // sanitization
+       let tag = document.getElementById("search_tag");
+        tag.innerHTML= "Showing Results for: "+ keyword;
+        tag.style.display = "inline";
+        this._http.searchResult(keyword).subscribe(test =>{
+          this.items = test
+          this.items = Array.of(this.items)
+          this.songs  =this.items[0].result
+          console.log(this.songs)
+        }
 
-      );
-    }
+        );
+      }
+      else{
+        window.alert("Invalid Input")
+      }
+  }
     else{
       document.getElementById("search_tag").style.display="none";
       this._http.getSongs().subscribe(data =>{
@@ -87,15 +94,23 @@ export class SongsComponent implements OnInit, AfterViewChecked {
     console.log("hi")
 
   }
-  addReview(song){ // add option to show review using POST method
+  addReview(song){ // add option to post review using POST method
     let rev = window.prompt("What are your views?")
+    let ip  = [rev]
     let sname = song;
+    if(rev !=null){
+    if(sanitized_input(ip)){ // sanitizing i/p
     this._http.postReview(rev,song).subscribe(data =>{
       if(data.result="success"){
         window.alert("review posted")
       }
     })
   }
+    else{
+      window.alert("Invalid input");
+    }
+  }
+}
 
 // adding songs using POST method
   addSong()
@@ -109,12 +124,24 @@ export class SongsComponent implements OnInit, AfterViewChecked {
       let album = window.prompt("Name of the album")
       let year = window.prompt("Name of the year")
       let genre = window.prompt("Name of the genre")
-      this._http.addsong(title,artist,album,year,genre).subscribe(data =>{
-        if(data.result="success"){
-          window.alert("1 song added")
-          setInterval(()=>{this.getSongs()},1000)
-        }
-      })
+      let ip = [title,artist,album,year,genre]
+      if(sanitized_input(ip)){// sanitizing i/p
+
+        this._http.addsong(title,artist,album,year,genre).subscribe(data =>{
+          if(data.result="success"){
+            window.alert("1 song added")
+            let rev = window.confirm("Want to add a review?")
+            if(rev){
+              this.addReview(title); //adding review while adding songs 
+            }
+            setInterval(()=>{this.getSongs()},1000)
+          }
+        })
+    }
+      else{
+        window.alert("Invalid input")
+
+    }
     }
 
 
@@ -123,7 +150,23 @@ export class SongsComponent implements OnInit, AfterViewChecked {
 }
 
 
-
+function sanitized_input(ip){
+   let regex = /([\w\d\s\.\!\"\'])+/
+   for( let i=0;i<ip.length;i++){
+     if(Boolean(ip[i].match(regex))){
+        let count = 0
+        count +=1;
+        if(count == ip.length){
+        return true ;
+        }
+        else 
+        {
+          return false;
+        }
+      }
+  
+}
+}
 
   
 
