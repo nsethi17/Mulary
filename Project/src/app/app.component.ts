@@ -7,4 +7,8 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'Project';
+   logout(){
+     sessionStorage.setItem("login_flag","false");
+     location.reload();
+   }
 }

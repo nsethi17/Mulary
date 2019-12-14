@@ -1,4 +1,4 @@
-
+<body>
 <header>
   <div class="box">
     <a routerLink="/" class="logo">Mulary</a>
@@ -6,7 +6,7 @@
       <ul id="parts">
         <li><a href="#" routerLink="/">Home</a></li>
         <li><a href="#" routerLink="/songs">Songs</a></li>
-        <li id="parts_logout" style="display:none"><a href="#" routerLink="/" >Logout</a></li>
+        <li id="parts_logout" style="display:none" (click)="logout()"><a href="#" routerLink="/" >Logout</a></li>
       </ul>
     </nav>
   </div>
@@ -15,4 +15,4 @@
 <div class="box">
   <router-outlet></router-outlet>
 </div>
-
+</body>

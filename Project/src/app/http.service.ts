@@ -25,6 +25,19 @@ export class HttpService {
     })
   }
 
+  //get reviews
+  getReviews(song: any):Observable<any>{
+     let s: any = {};
+     s.title=song;
+    console.log(song)
+    return this.http.post<any>('http://localhost:1234/api/open/review',s,{
+      headers: new HttpHeaders( {
+        'Content-Type': 'application/json'
+      }),
+      observe:"body",
+    })
+  }
+
   //to check if User exists or not
   user_login(u:any):Observable<any>{
     let user = u;
@@ -36,6 +49,8 @@ export class HttpService {
     })
 
   }
+
+  // for adding new user
   user_signup(u:any):Observable<any>{
     let user = u;
     return this.http.put<any>('http://localhost:1234/api/register',user,{
@@ -47,6 +62,7 @@ export class HttpService {
 
   }
 
+//adding reviews
   postReview(rev:any,song:any){
     let review = {"review":rev,"song":song}
     return this.http.post<any>('http://localhost:1234/api/secure/review',review,{
@@ -59,6 +75,7 @@ export class HttpService {
 
   }
 
+// for adding songs
   addsong(t,a,al,y,g){
     let new_song = {"title":t,"artist":a,"album":al,"year":y,"genre":g}
     return this.http.post<any>('http://localhost:1234/api/secure/add_song',new_song,{
@@ -70,7 +87,5 @@ export class HttpService {
     })
 
   }
-
- 
 
 }

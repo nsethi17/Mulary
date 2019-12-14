@@ -149,16 +149,36 @@ app.get("/api/open/Songs",(req,res) =>
 
     db_obj.collection("Songs").find({},{projection:{_id:0}}).toArray(function(err,result){
         if (err) console.log( err);
-       // const token = jwt.sign(result,process.env.webproj_jwtkey);
-        //console.log(token);
         res.send({'result':result});
-        console.log(result);
         db.close();
     });
   
 });
 });
+//getting song reviews 
+app.post("/api/open/review",(req,res)=>{
+    MongoClient.connect(url, function(err, db){
+        if (err) console.log(err);
+        let db_obj =db.db("Web_proj");
+        let query = req.body.title
+        console.log(query)
+        db_obj.collection("Reviews").find({title: {$eq:query}},{projection:{_id:0}}).toArray(function(err,result){
+            if (err) console.log( err);
+            // let reviews = {}
+            // let num= result.length
+            // reviews.revs = result
+            // console.log(num)
+            //console.log(reviews.revs[1].rating)  
+            //console.log(reviews.nit.slice(-1).pop())    
+            //console.log(reviews)      
+            res.send({'result':result});
+            db.close();
+        });
+      
+    });
 
+
+});
 
 //followed w3schools tutorial for making requests
 app.post("/api/open/Songs/search",(req,res) =>//to search songs 
@@ -205,7 +225,6 @@ app.post("/api/secure/review",jwtAuth,(req,res)=>{
 })
 
 //adding new songs
-//posting review
 app.post("/api/secure/add_song",jwtAuth,(req,res)=>{
     MongoClient.connect(url, function(err,db)
     {   let tags = [req.body.title,req.body.artist,req.body.album,req.body.year,req.body.genre]

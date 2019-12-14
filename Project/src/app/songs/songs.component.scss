@@ -1,3 +1,7 @@
+h1{
+    color: lime;
+}
+
 ol {
     list-style-type: none;
     margin: 0;
@@ -44,7 +48,53 @@ ol {
             flex-grow: 1;
         }
         a{
-            background-color: whitesmoke;
+            text-decoration-line: underline;
+            color: blue;
+            
         }
+       
+        .expanded-content {
+            /* Height & width depends on how you want to reveal the overlay (see JS below) */   
+            height: 100%;
+            width: 0;
+            position: fixed; /* Stay in place */
+            z-index: 1; ;
+            left: 0;
+            top: 0;
+            background-color: rgb(238, 238, 238);
+            //background-color: rgba(0,0,0, 0.9); /* Black w/opacity */
+            overflow: auto; /* Disable horizontal scroll */
+            transition: 0.5s; /* 0.5 second transition effect to slide in or slide down the overlay (height or width, depending on reveal) */
+          }
+          .expanded-content .closebtn {
+            position: absolute;
+            top: 20px;
+            right: 45px;
+            font-size: 60px;
+          }
     }
+}
+#review_list{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: inherit;
+    flex-wrap: wrap;
+
+    li{
+        background: rgb(65, 62, 62);
+        color: hotpink;
+        padding: 1em;
+        margin-right: 10px;
+        width: 100%;
+        height: fit-content;;
+        margin-bottom: 1em;
+        display: list-item;
+        flex-direction: column;
+
+        
+        
+    }
+   
+
 }

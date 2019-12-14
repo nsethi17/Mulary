@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { EmailValidator } from '@angular/forms';
 import { HttpService } from '../http.service';
-var login_flag = false
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -17,9 +17,7 @@ export class HomeComponent implements OnInit {
     let signup_btn = document.getElementById("signup_btn");
     signup_btn.addEventListener("click",this.newUserDetails);
     this.display();
-    if(!login_flag){
-    sessionStorage.setItem('login_flag','false')
-    }
+   
   }
 
   display(){ 
@@ -39,7 +37,6 @@ export class HomeComponent implements OnInit {
         let u = {email: email, password: password}
         this._http.user_login(u).subscribe(test =>{ //confirming if user exists in db or not
           if(test.login == "success"){
-              login_flag = true;
              sessionStorage.setItem("login_flag","true");
             if(sessionStorage.getItem("login_flag") =="true" && test.status =="active"){
               sessionStorage.setItem("access-token",test.token);
