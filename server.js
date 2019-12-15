@@ -155,6 +155,41 @@ app.get("/api/open/Songs",(req,res) =>
   
 });
 });
+//getting playlists for unauthenticated users
+app.get("/api/open/Playlists",(req,res) =>
+{ 
+    
+  MongoClient.connect(url, function(err, db){
+    if (err) console.log(err);
+    let db_obj =db.db("Web_proj");
+    let query="public"
+    db_obj.collection("Playlists").find({visibility:{$eq:query}},{projection:{_id:0}}).toArray(function(err,result){
+        if (err) console.log( err);
+        res.send({'result':result});
+        db.close();
+    });
+  
+});
+});
+
+//getting playlists for authenticated users
+app.get("/api/secure/Playlists",jwtAuth,(req,res) =>
+{ 
+  MongoClient.connect(url, function(err, db){
+    if (err) console.log(err);
+    let dat = {}
+    let db_obj =db.db("Web_proj");
+    let query="public"
+    db_obj.collection("Playlists").find({$or:[{visibility:{$eq:query}},{user:{$eq:req.username}}]},{projection:{_id:0}}).toArray(function(err,result){
+        if (err) console.log( err);
+        res.send({'result':result});
+        db.close();
+        
+    });
+     
+}); 
+});
+
 //getting song reviews 
 app.post("/api/open/review",(req,res)=>{
     MongoClient.connect(url, function(err, db){
@@ -242,8 +277,8 @@ app.put("/api/secure/new_playlist",jwtAuth,(req,res)=>{
     {   
         if(err) console.log(err);
         let db_obj =db.db("Web_proj");  
-        let new_play = req.body//{title: req.body.song, user:req.username,rating:"5",review:req.body.review}
-        console.log(new_play)
+        let new_play = req.body 
+        new_play.user = req.username
         db_obj.collection("Playlists").insertOne(new_play,function(err, result){
             if (err) console.log(err);
             res.send({"result": "success"});
@@ -254,7 +289,28 @@ app.put("/api/secure/new_playlist",jwtAuth,(req,res)=>{
 
     });
 })
+// adding songs to a playlist
+app.post("/api/secure/insertpl",jwtAuth,(req,res)=>{
+    MongoClient.connect(url, function(err,db)
+    {
+        if(err) console.log(err);
+        let db_obj =db.db("Web_proj");  
+        db_obj.collection("Playlists").updateOne({name: {$eq:req.body.name},user:{$eq:req.username}},{$push:{songs: {$each: req.body.songs}}},function(err, result){
+            if (err) console.log(err);
+            if(result.modifiedCount>0){
+            res.send({"result": "success"});
+        }
+        else{
+            res.send({"result": "failed"});
+        }
+            db.close();
+        });
+        
 
+      
+
+    });
+})
 function jwtCreate(user){
     let token = jwt.sign(user,process.env.jwt_key);
     return token;

@@ -12,6 +12,24 @@ export class HttpService {
   getSongs(){
     return this.http.get('http://localhost:1234/api/open/Songs');
   }
+
+   // to get songs
+   getPlaylists(){
+     if(sessionStorage.getItem("login_flag")=="true"){
+      return this.http.get('http://localhost:1234/api/secure/Playlists',{
+        headers: new HttpHeaders( {
+          'Content-Type': 'application/json',
+          'Authorization':'Bearer:'+sessionStorage.getItem("access-token")
+        }),
+        observe:"body"
+
+      });
+  }
+  else {
+    return this.http.get('http://localhost:1234/api/open/Playlists')
+  }
+  }
+
   // to search songs based on a keyword
   searchResult(keyword: any):Observable<any>{
     let kw: any = {};
@@ -92,7 +110,7 @@ export class HttpService {
     if(d ==""){
       d= "No Description";
     }
-    let new_playlist = {"name": n, "description":d,"visibilty":v}
+    let new_playlist = {"name": n, "description":d,"visibility":v}
     console.log(new_playlist)
     return this.http.put<any>('http://localhost:1234/api/secure/new_playlist',new_playlist,{
       headers: new HttpHeaders( {
@@ -102,6 +120,19 @@ export class HttpService {
       observe:"body"
     })
     
+  }
+
+  //adding songs to a playlist
+  inserttoPlaylist(name,lib):Observable<any>{
+    let sp = {"name":name,"songs":lib};
+    return this.http.post<any>('http://localhost:1234/api/secure/insertpl',sp,{
+      headers: new HttpHeaders( {
+        'Content-Type': 'application/json',
+        'Authorization':'Bearer:'+sessionStorage.getItem("access-token")
+      }),
+      observe:"body"
+    })
+
   }
 
 }

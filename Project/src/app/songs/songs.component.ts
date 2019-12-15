@@ -7,6 +7,7 @@ import { __await } from 'tslib';
 import { AngularWaitBarrier } from 'blocking-proxy/built/lib/angular_wait_barrier';
 import { Input } from '@angular/compiler/src/core';
 import { getRandomString } from 'selenium-webdriver/safari';
+import { Button } from 'protractor';
 @Component({
   selector: 'app-songs',
   templateUrl: './songs.component.html',
@@ -26,10 +27,11 @@ export class SongsComponent implements OnInit, AfterViewChecked {
       };
      document.getElementById("ausers").style.display="block"
   }
- 
+  play: any= [];
   timer: any 
   items:  any = [];
   songs: any;
+  lists : any;
   test:any =[] ;
   music: any = []
   constructor(private _http: HttpService, private _home:HomeComponent) {}
@@ -37,6 +39,7 @@ export class SongsComponent implements OnInit, AfterViewChecked {
   ngOnInit() {
     
    this.getSongs() 
+   this.getPlaylists()
   }
  
  
@@ -50,6 +53,16 @@ export class SongsComponent implements OnInit, AfterViewChecked {
       
     });
   }
+  getPlaylists() {
+
+    this._http.getPlaylists().subscribe(data =>{
+      this.play = data
+      this.play = Array.of(this.play)
+      this.lists = this.play[0].result 
+      console.log(data)
+    });
+  }
+ 
  
    // getting all reviews for a song when it is expanded 
    expand_item(song,ar,al,y,g){
@@ -110,6 +123,30 @@ export class SongsComponent implements OnInit, AfterViewChecked {
     location.reload()
     document.getElementById("overlay").style.width = "0%";
 
+  }
+
+  playlist_view(t,des,vis,s){
+
+    document.getElementById("overlay2").style.width = "100%";
+    document.getElementById("pname").innerHTML = t;
+    document.getElementById("pdes").innerHTML = des;
+    document.getElementById("pvis").innerHTML = vis;
+    for(let i=0;i<s.length;i++){
+      let l = document.createElement("li")
+      let x = document.createElement("p")
+      let y = document.createElement("p")
+      let z = document.createElement("p")
+      l.setAttribute("id","index"+i)
+      l.style.cssText="background: rgb(65, 62, 62); color: hotpink; padding: 1em; margin-right: 10px; width: 100%; height: fit-content; margin-bottom: 1em; display: list-item; flex-direction: column;"
+
+      x.innerHTML=s[i].title
+      y.innerHTML=s[i].artist
+      z.innerHTML=s[i].album
+      l.appendChild(x)
+      l.appendChild(y)
+      l.appendChild(z)
+      document.getElementById("play_list").appendChild(l)
+    }
   }
   
   
@@ -237,6 +274,8 @@ newPlaylist(){
       if(data.result="success"){
         window.alert("New Playlist created")
       }
+      setInterval(()=>{this.getPlaylists()},1000)
+
     });
     
   }
@@ -246,12 +285,29 @@ newPlaylist(){
 };
 
 //adding song to playlist
-adds2p(i,song){
+adds2p(song,ar,al,y,g){
   let name = window.prompt("Which playlist do you want to add to?")
   let ip = [name]
-  if(sanitized_input(ip)){
-  let s = document.getElementById(i)
-  console.log("sded")
+  let lib = [{"title":song,"artist":ar,"album":al,"year":y,"genre":g}]
+  if(sanitized_input(ip)){//sanitizing input
+  
+  
+  this._http.inserttoPlaylist(name,lib).subscribe(data =>{
+    console.log(data.result)
+
+    if(data.result=="success"){
+      window.alert("1 song inserted")
+    }
+    else{
+      window.alert("you cannot update anyone else's playlist")
+    }
+    setTimeout(()=>{this.getPlaylists()},1000)
+
+
+  });
+  }
+  else{
+    window.alert("Invalid input")
   }
 };
   
