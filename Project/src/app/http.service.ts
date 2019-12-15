@@ -87,5 +87,21 @@ export class HttpService {
     })
 
   }
+// adding new playlist
+  addPlaylist(n,d,v){
+    if(d ==""){
+      d= "No Description";
+    }
+    let new_playlist = {"name": n, "description":d,"visibilty":v}
+    console.log(new_playlist)
+    return this.http.put<any>('http://localhost:1234/api/secure/new_playlist',new_playlist,{
+      headers: new HttpHeaders( {
+        'Content-Type': 'application/json',
+        'Authorization':'Bearer:'+sessionStorage.getItem("access-token")
+      }),
+      observe:"body"
+    })
+    
+  }
 
 }

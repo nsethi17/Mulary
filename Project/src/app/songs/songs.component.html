@@ -9,6 +9,7 @@
     <p class="title">{{ item.title }}</p>
     <p class="artist">{{ item.artist }}</p>
     <p class="album">{{ item.album }}</p>
+    <!-- conntent after expanding the song-->
     <div id = "overlay" class= "expanded-content">
         <h1>Song</h1>
         <p id="t" class="title"></p>
@@ -25,11 +26,15 @@
         <a class="closebtn" (click)="close()">&times;</a>
     </div>
     <a role="button" (click)= "expand_item(item.title,item.artist,item.album,item.year,item.genre)">Details</a>
+
     <button id="rev_btn" class="post_rev" type="button" style="display: none;" (click)="addReview(item.title)" >Add Review</button>
+    <button id="playlist_btn" class="post_rev" type="button" style="display: none;" (click)="addReview(item.title)" >Add to Playlist</button>
   </li>
   
 </ol>
+<h1>Playlists Avialable</h1>
 <div id="ausers" style="display: none;">
 <button id="addsong_btn" type="button" (click)="addSong()">Add Song</button>
+<button id="addsong_btn" type="button" (click)="newPlaylist()">Create Playlist</button>
 </div>
 </body>

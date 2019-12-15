@@ -163,14 +163,7 @@ app.post("/api/open/review",(req,res)=>{
         let query = req.body.title
         console.log(query)
         db_obj.collection("Reviews").find({title: {$eq:query}},{projection:{_id:0}}).toArray(function(err,result){
-            if (err) console.log( err);
-            // let reviews = {}
-            // let num= result.length
-            // reviews.revs = result
-            // console.log(num)
-            //console.log(reviews.revs[1].rating)  
-            //console.log(reviews.nit.slice(-1).pop())    
-            //console.log(reviews)      
+            if (err) console.log( err);     
             res.send({'result':result});
             db.close();
         });
@@ -243,6 +236,24 @@ app.post("/api/secure/add_song",jwtAuth,(req,res)=>{
     });
 })
 
+// creating a new playlist
+app.put("/api/secure/new_playlist",jwtAuth,(req,res)=>{
+    MongoClient.connect(url, function(err,db)
+    {   
+        if(err) console.log(err);
+        let db_obj =db.db("Web_proj");  
+        let new_play = req.body//{title: req.body.song, user:req.username,rating:"5",review:req.body.review}
+        console.log(new_play)
+        db_obj.collection("Playlists").insertOne(new_play,function(err, result){
+            if (err) console.log(err);
+            res.send({"result": "success"});
+            db.close();
+        });
+
+      
+
+    });
+})
 
 function jwtCreate(user){
     let token = jwt.sign(user,process.env.jwt_key);

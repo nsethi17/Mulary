@@ -209,29 +209,68 @@ export class SongsComponent implements OnInit, AfterViewChecked {
 
     }
     }
+  };
 
+  //create a new playlist
+newPlaylist(){
 
+  let name = window.prompt("Name of the playlist?")
+  let des = window.prompt("Description:")
+  let vis = "private";  
+  let visibility = window.confirm("Do you want to make this playlist Public?")
+  if(visibility == true){
+    vis= "public";
   }
+  else{
+    vis = vis;
+  }
+  if(des !="" || des!= null){
+  var ip = [name,des]
+  ip = Array.from(ip)
+  }
+  else{
+    ip = [name]
+    ip = Array.from(ip)
+  }
+  if(sanitized_input(ip)){ // sanitizing ip
+    this._http.addPlaylist(name,des,vis).subscribe(data =>{
+      if(data.result="success"){
+        window.alert("New Playlist created")
+      }
+    });
+    
+  }
+  else{
+    window.alert("Invalid input")
+  }
+};
   
 }
+
+
 
 
 function sanitized_input(ip){
-   let regex = /([\w\d\s\.\!\"\'])+/
+  console.log(ip)
+   let regex = /^([\w\d\s\.\!\"\']|)+/
+   let count = 0
+   console.log(typeof ip)
    for( let i=0;i<ip.length;i++){
+    console.log(Boolean(ip[i].match(regex)))
      if(Boolean(ip[i].match(regex))){
-        let count = 0
         count +=1;
-        if(count == ip.length){
-        return true ;
-        }
-        else 
-        {
-          return false;
-        }
+        
+        
       }
   
 }
+if(count == ip.length){
+  return true ;
+  }
+  else 
+  {
+    return false;
+  }
 }
 
   
