@@ -5,7 +5,7 @@
 
 </p>
 <ol *ngIf="songs">
-  <li *ngFor="let item of songs" >
+  <li *ngFor="let item of songs, index as i" id="{{i}}" >
     <p class="title">{{ item.title }}</p>
     <p class="artist">{{ item.artist }}</p>
     <p class="album">{{ item.album }}</p>
@@ -28,7 +28,7 @@
     <a role="button" (click)= "expand_item(item.title,item.artist,item.album,item.year,item.genre)">Details</a>
 
     <button id="rev_btn" class="post_rev" type="button" style="display: none;" (click)="addReview(item.title)" >Add Review</button>
-    <button id="playlist_btn" class="post_rev" type="button" style="display: none;" (click)="addReview(item.title)" >Add to Playlist</button>
+    <button id="playlist_btn" class="post_rev" type="button" style="display: none;" (click)="adds2p(i,item.title)" >Add to Playlist</button>
   </li>
   
 </ol>

@@ -51,7 +51,7 @@ export class SongsComponent implements OnInit, AfterViewChecked {
     });
   }
  
-   // getting all reviews for a song
+   // getting all reviews for a song when it is expanded 
    expand_item(song,ar,al,y,g){
     document.getElementById("overlay").style.width = "100%";
     document.getElementById("t").innerHTML = song;
@@ -162,11 +162,11 @@ export class SongsComponent implements OnInit, AfterViewChecked {
   }
   addReview(song){ // add option to post review using POST method
     let rev = window.prompt("What are your views?")
-    let ip  = [rev]
-    let sname = song;
+    let rate = window.prompt("Rate the song ot of 5:")
+    let ip  = [rev,rate]
     if(rev !=null){
     if(sanitized_input(ip)){ // sanitizing i/p
-    this._http.postReview(rev,song).subscribe(data =>{
+    this._http.postReview(rev,rate,song).subscribe(data =>{
       if(data.result="success"){
         window.alert("review posted")
       }
@@ -244,31 +244,39 @@ newPlaylist(){
     window.alert("Invalid input")
   }
 };
+
+//adding song to playlist
+adds2p(i,song){
+  let name = window.prompt("Which playlist do you want to add to?")
+  let ip = [name]
+  if(sanitized_input(ip)){
+  let s = document.getElementById(i)
+  console.log("sded")
+  }
+};
   
 }
 
 
 
-
+//for sanitizing user input
 function sanitized_input(ip){
-  console.log(ip)
-   let regex = /^([\w\d\s\.\!\"\']|)+/
+  console.log(ip.length)
+   let regex = /^([\w\d\s\.\!\"\']|)+$/
    let count = 0
-   console.log(typeof ip)
    for( let i=0;i<ip.length;i++){
     console.log(Boolean(ip[i].match(regex)))
      if(Boolean(ip[i].match(regex))){
+        
         count +=1;
-        
-        
       }
-  
 }
 if(count == ip.length){
   return true ;
   }
   else 
   {
+    console.log(count)
     return false;
   }
 }

@@ -203,7 +203,7 @@ app.post("/api/secure/review",jwtAuth,(req,res)=>{
     {
         if(err) console.log(err);
         let db_obj =db.db("Web_proj");  
-        let new_review = {title: req.body.song, user:req.username,rating:"5",review:req.body.review}
+        let new_review = {title: req.body.song, user:req.username,rating:req.body.rating,review:req.body.review}
         console.log(new_review)
         db_obj.collection("Songs").update({title: {$eq:new_review.title}},{$inc:{num_revs:1}});
         db_obj.collection("Reviews").insertOne(new_review,function(err, result){

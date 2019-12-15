@@ -63,8 +63,8 @@ export class HttpService {
   }
 
 //adding reviews
-  postReview(rev:any,song:any){
-    let review = {"review":rev,"song":song}
+  postReview(rev:any,rate:any,song:any){
+    let review = {"review":rev,"rating":rate,"song":song}
     return this.http.post<any>('http://localhost:1234/api/secure/review',review,{
       headers: new HttpHeaders( {
         'Content-Type': 'application/json',
