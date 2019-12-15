@@ -46,7 +46,7 @@ app.post("/api/login",async (req,res)=>
             try{
                 if( await bcrypt.compare(query.password,result.password)){
                     let tok = jwtCreate(query.email);
-                    res.send({'login':'success','status':result.status,'token':tok});
+                    res.send({'login':'success','status':result.status,'token':tok,'admin':result.admin});
                 }
                 else{
                     res.send({'login':"failed"});
@@ -77,7 +77,7 @@ app.put("/api/register",async(req,res)=>
         MongoClient.connect(url, function(err,db){
             if (err) throw err;
             let db_obj = db.db("Web_proj");
-            let new_user = {email:req.body.email, password: hashed_password}
+            let new_user = {email:req.body.email, password: hashed_password ,status:"inactive", admin:"false"}
             db_obj.collection("temp_Users").findOne({email:{$eq:new_user.email}},function(err,result){
                 if(result!=null && new_user.email == result.email)
             {   
@@ -140,6 +140,7 @@ app.get("/api/verify",(req,res)=>{
 
 
 // paths possible => /api/open , /api/secure , /api/admin
+// UNAUTH USER REQS (/API/OPEN)
 app.get("/api/open/Songs",(req,res) =>
 { //followed w3schools tutorial for making requests
     
@@ -147,7 +148,7 @@ app.get("/api/open/Songs",(req,res) =>
     if (err) console.log(err);
     let db_obj =db.db("Web_proj");
 
-    db_obj.collection("Songs").find({},{projection:{_id:0}}).toArray(function(err,result){
+    db_obj.collection("Songs").find({hidden:"false"},{projection:{_id:0}}).toArray(function(err,result){
         if (err) console.log( err);
         res.send({'result':result});
         db.close();
@@ -172,23 +173,7 @@ app.get("/api/open/Playlists",(req,res) =>
 });
 });
 
-//getting playlists for authenticated users
-app.get("/api/secure/Playlists",jwtAuth,(req,res) =>
-{ 
-  MongoClient.connect(url, function(err, db){
-    if (err) console.log(err);
-    let dat = {}
-    let db_obj =db.db("Web_proj");
-    let query="public"
-    db_obj.collection("Playlists").find({$or:[{visibility:{$eq:query}},{user:{$eq:req.username}}]},{projection:{_id:0}}).toArray(function(err,result){
-        if (err) console.log( err);
-        res.send({'result':result});
-        db.close();
-        
-    });
-     
-}); 
-});
+
 
 //getting song reviews 
 app.post("/api/open/review",(req,res)=>{
@@ -229,7 +214,25 @@ app.post("/api/open/Songs/search",(req,res) =>//to search songs
     });
     
 });
-
+//AUTHENTICATED USER REQUESTS (/API/USER)
+//getting playlists for authenticated users
+app.get("/api/secure/Playlists",jwtAuth,(req,res) =>
+{ 
+    console.log(req.username)
+  MongoClient.connect(url, function(err, db){
+    if (err) console.log(err);
+    let dat = {}
+    let db_obj =db.db("Web_proj");
+    let query="public"
+    db_obj.collection("Playlists").find({$or:[{visibility:{$eq:query}},{user:{$eq:req.username}}]},{projection:{_id:0}}).toArray(function(err,result){
+        if (err) console.log( err);
+        res.send({'result':result});
+        db.close();
+        
+    });
+     
+}); 
+});
 
 //posting review
 app.post("/api/secure/review",jwtAuth,(req,res)=>{
@@ -260,6 +263,8 @@ app.post("/api/secure/add_song",jwtAuth,(req,res)=>{
         let db_obj =db.db("Web_proj");  
         let new_song = req.body//{title: req.body.song, user:req.username,rating:"5",review:req.body.review}
         new_song.Tags =tags;
+        new_song.num_revs=0;
+        new_song.hidden="false"
         db_obj.collection("Songs").insertOne(new_song,function(err, result){
             if (err) console.log(err);
             res.send({"result": "success"});
@@ -316,17 +321,7 @@ app.post("/api/secure/editpl",jwtAuth,(req,res)=>{
     MongoClient.connect(url, function(err,db)
     {
         if(err) console.log(err);
-        let db_obj =db.db("Web_proj"); 
-        if(req.body.field=="name"){
-            let query="name"
-        } 
-        else if(req.body.field=="description"){
-            let query = "description"
-        }
-        else if (req.body.field == "visibility"){
-            let query = "visibility"
-        }
-        console.log(req.body.name,req.body.field,req.body.newval)
+        let db_obj =db.db("Web_proj");
         db_obj.collection("Playlists").updateOne({name: {$eq:req.body.name},user:{$eq:req.username}},{$set:{[req.body.field]: req.body.newval}},function(err, result){
             if (err) console.log(err);
             console.log(result.modifiedCount)
@@ -364,6 +359,83 @@ app.post("/api/secure/removesongfrompl",jwtAuth,(req,res)=>{
 
     });
 })
+//ADMIN REQUESTS(/API/ADMIN)
+//getting playlists for admin users
+app.get("/api/admin/Playlists",jwtAuth,(req,res) =>
+{ 
+    console.log(req.username)
+  MongoClient.connect(url, function(err, db){
+    if (err) console.log(err);
+    let db_obj =db.db("Web_proj");
+    db_obj.collection("Playlists").find({},{projection:{_id:0}}).toArray(function(err,result){
+        if (err) console.log( err);
+        res.send({'result':result});
+        db.close();
+        
+    });
+     
+}); 
+});
+
+//getting all songs
+app.get("/api/admin/Songs",(req,res) =>
+{ //followed w3schools tutorial for making requests
+    
+  MongoClient.connect(url, function(err, db){
+    if (err) console.log(err);
+    let db_obj =db.db("Web_proj");
+
+    db_obj.collection("Songs").find({},{projection:{_id:0}}).toArray(function(err,result){
+        if (err) console.log( err);
+        res.send({'result':result});
+        db.close();
+    });
+  
+});
+});
+
+//modifying songs 
+app.post("/api/admin/modifySong",jwtAuth,(req,res)=>{
+    MongoClient.connect(url, function(err,db)
+    {
+        if(err) console.log(err);
+        console.log(req.body.name,req.body.field,req.body.newval)
+        let db_obj =db.db("Web_proj");
+        db_obj.collection("Songs").updateOne({title: {$eq:req.body.name}},{$set:{[req.body.field]: req.body.newval}},function(err, result){
+            if (err) console.log(err);
+            console.log(result.modifiedCount)
+            if(result.modifiedCount>0){
+            res.send({"result": "success"});
+        }
+        else{
+            res.send({"result": "failed"});
+        }
+            db.close();
+        });
+        
+    });
+})
+
+//deleting a song
+app.post("/api/admin/deleteSong",jwtAuth,(req,res)=>{
+    MongoClient.connect(url, function(err,db)
+    {
+        if(err) console.log(err);
+        let db_obj =db.db("Web_proj");  
+        db_obj.collection("Songs").deleteOne({title:req.body.name},function(err, result){
+            if (err) console.log(err);
+            res.send({"result": "success"});     
+            db.close();
+        });
+        
+
+      
+
+    });
+})
+
+
+
 
 function jwtCreate(user){
     let token = jwt.sign(user,process.env.jwt_key);

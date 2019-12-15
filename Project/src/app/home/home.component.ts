@@ -31,15 +31,18 @@ export class HomeComponent implements OnInit {
     login_check =() => {
       let email = (document.getElementById("email") as HTMLInputElement).value;
       let password = (document.getElementById("password") as HTMLInputElement).value;
+         
       let ev = email_validation(email);
       let pc =password_Check(password);
+
       if(ev && pc){
         let u = {email: email, password: password}
         this._http.user_login(u).subscribe(test =>{ //confirming if user exists in db or not
           if(test.login == "success"){
-             sessionStorage.setItem("login_flag","true");
+            sessionStorage.setItem("login_flag","true");
             if(sessionStorage.getItem("login_flag") =="true" && test.status =="active"){
               sessionStorage.setItem("access-token",test.token);
+              sessionStorage.setItem("admin",test.admin)
               this.display()
         
             }
@@ -54,10 +57,10 @@ export class HomeComponent implements OnInit {
       
           
         });
-        
-        
-      }
-  
+          
+          
+        }
+      
   }
 
   //New User Signup

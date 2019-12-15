@@ -1,4 +1,5 @@
 <body>
+  <h1 class="admin_sm" style="display: none;">You are an Admin</h1>
 <h1>Available Songs</h1>
 <p><input type="text"  placeholder="Search a song" id="search_song" (change) = "search_songs()"><br>
 <strong style="display: none;" id="search_tag"></strong>
@@ -9,6 +10,7 @@
     <p class="title">{{ item.title }}</p>
     <p class="artist">{{ item.artist }}</p>
     <p class="album">{{ item.album }}</p>
+    <p class="admin_sm" style="display: none;">hidden flag: {{item.hidden}}</p>
     <!-- conntent after expanding the song-->
     <div id = "overlay" class= "expanded-content">
         <h1>Song</h1>
@@ -60,6 +62,14 @@
 </ol>
 <div id="ausers" style="display: none;">
 <button id="addsong_btn" type="button" (click)="addSong()">Add Song</button>
-<button id="addsong_btn" type="button" (click)="newPlaylist()">Create Playlist</button>
+<button id="addplay_btn" type="button" (click)="newPlaylist()">Create Playlist</button>
+<div id="admins" style="display: none;">
+  <button id="modsong_btn" type="button" (click)="modSong()">Modify Song</button>
+  <button id="delsong_btn" type="button" (click)="delSong()">Delete Song</button>
+  <button id="delplay_btn" type="button" (click)="delPlaylist()">Delete Playlist</button>
+  <button id="nad_btn" type="button" (click)="newAdmin()">Make New Admin</button>
+  <button id="unaun_btn" type="button" (click)="userActDeact()">Activate/Deactivate Users</button>
+
+  </div>
 </div>
 </body>

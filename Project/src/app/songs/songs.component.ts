@@ -16,16 +16,21 @@ import { Button } from 'protractor';
 export class SongsComponent implements OnInit, AfterViewChecked {
   ngAfterViewChecked(): void {
 
-    var aob=document.getElementsByClassName("post_rev") 
+    var aob=document.getElementsByClassName("post_rev")
+    var sm=document.getElementsByClassName("admin_sm") 
     if(sessionStorage.getItem("login_flag")=="true"){
-      // console.log(aob.item(0))
         for(let i=0;i<aob.length;i++){
-          //aob.item(i).display= "block"
           aob[i].setAttribute("style","display:block;")
         }
-      //console.log(aob.item(0))        
       };
      document.getElementById("ausers").style.display="block"
+     if(sessionStorage.getItem("admin")=="true"){
+      for(let i=0;i<sm.length;i++){
+        sm[i].setAttribute("style","display:block;")
+      }
+
+      document.getElementById("admins").style.display="block"
+     }
   }
   play: any= [];
   timer: any 
@@ -41,7 +46,7 @@ export class SongsComponent implements OnInit, AfterViewChecked {
    this.getSongs() 
    this.getPlaylists()
   }
- 
+ //FUNCTIONALITIES FOR EVERYONE
  
  // gettings songs using GET method
   getSongs() {
@@ -197,6 +202,9 @@ export class SongsComponent implements OnInit, AfterViewChecked {
    
 
   }
+
+//FUNCTIONALITIES FOR AUTHENTICATED USERS & ADMINS
+
   addReview(song){ // add option to post review using POST method
     let rev = window.prompt("What are your views?")
     let rate = window.prompt("Rate the song ot of 5:")
@@ -274,7 +282,7 @@ newPlaylist(){
       if(data.result="success"){
         window.alert("New Playlist created")
       }
-      setInterval(()=>{this.getPlaylists()},1000)
+      setTimeout(()=>{this.getPlaylists()},1000)
 
     });
     
@@ -366,7 +374,48 @@ remsfp(name){
     window.alert("Invalid input")
   }
 };
+
+//FUNCTIONALITIES FOR ADMIN
+//modifying a song
+modSong(){
+  let n = window.prompt("Which song do you want to modify?")
+  let att = window.prompt("Which field to change?(title,artist,album,year,genre or hidden)")
+  let new_val = window.prompt("Enter the new value(for hiding, type: true)")
+  let ip =[n,att]
+  if(sanitized_input(ip)){
+    this._http.mod_song(n,att,new_val).subscribe(data =>{
+      if(data.result="success"){
+        window.alert("Song has been modified")
+      }
+      setTimeout(()=>{this.getSongs()},1000)
+
+    });
+
+  }
+  else{
+    window.alert("Invalid Input")
+  }
+}
+//deleting a song
+delSong(){
+  let n = window.prompt("Which song do you want to delete?")
   
+  let ip =[n]
+  if(sanitized_input(ip)){
+    this._http.del_song(n).subscribe(data =>{
+      if(data.result="success"){
+        window.alert("Song has been deleted")
+      }
+      setTimeout(()=>{this.getSongs()},1000)
+
+    });
+
+  }
+  else{
+    window.alert("Invalid Input")
+  }
+} 
+
 }
 
 
