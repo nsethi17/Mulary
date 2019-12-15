@@ -45,8 +45,10 @@
       <p id="pname" class="title"></p>
       <p id="pdes" class="artist"></p>
       <p id="pvis" class="album"></p>
-      <ol id="play_list">
+      <button id="edit_btn" class="post_rev" type="button" style="display: none;" (click)="remsfp(play.name)" >Remove a Song</button>
 
+      <ol id="play_list">
+  
       </ol>
       <a class="closebtn" (click)="close()">&times;</a>
     </div>

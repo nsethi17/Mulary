@@ -339,6 +339,33 @@ console.log(namep,ip)
       }  
   }
 };
+
+//removing song from playlist
+remsfp(name){
+  let song = window.prompt("Which song do you want to remove?")
+  let ip = [song]
+  console.log(name)
+  if(sanitized_input(ip)){//sanitizing input
+  
+  
+  this._http.removesongfrompl(name,song).subscribe(data =>{
+    console.log(data.result)
+
+    if(data.result=="success"){
+      window.alert("1 song removed")
+    }
+    else{
+      window.alert("you cannot update anyone else's playlist")
+    }
+    setTimeout(()=>{this.getPlaylists()},1000)
+
+
+  });
+  }
+  else{
+    window.alert("Invalid input")
+  }
+};
   
 }
 

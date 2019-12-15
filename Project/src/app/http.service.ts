@@ -150,5 +150,18 @@ export class HttpService {
     })
 
   }
+  //removing songs from a playlist
+  removesongfrompl(name,so):Observable<any>{
+    let sp = {"name":name,"song":so};
+    return this.http.post<any>('http://localhost:1234/api/secure/removesongfrompl',sp,{
+      headers: new HttpHeaders( {
+        'Content-Type': 'application/json',
+        'Authorization':'Bearer:'+sessionStorage.getItem("access-token")
+      }),
+      observe:"body"
+    })
+
+  }
+
 
 }

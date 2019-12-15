@@ -342,6 +342,29 @@ app.post("/api/secure/editpl",jwtAuth,(req,res)=>{
     });
 })
 
+// removing songs from a playlist
+app.post("/api/secure/removesongfrompl",jwtAuth,(req,res)=>{
+    MongoClient.connect(url, function(err,db)
+    {
+        if(err) console.log(err);
+        let db_obj =db.db("Web_proj");  
+        db_obj.collection("Playlists").updateOne({name: {$eq:req.body.name},user:{$eq:req.username}},{$pull:{songs:{title:req.body.song}}},function(err, result){
+            if (err) console.log(err);
+            if(result.modifiedCount>0){
+            res.send({"result": "success"});
+        }
+        else{
+            res.send({"result": "failed"});
+        }
+            db.close();
+        });
+        
+
+      
+
+    });
+})
+
 function jwtCreate(user){
     let token = jwt.sign(user,process.env.jwt_key);
     return token;
