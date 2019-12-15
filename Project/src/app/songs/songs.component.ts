@@ -310,6 +310,35 @@ adds2p(song,ar,al,y,g){
     window.alert("Invalid input")
   }
 };
+//editing a playlist
+editPlay(namep){
+  let plname = namep
+let e=window.prompt("what do you want to edit?(name, description or visibility)")
+let new_val = window.prompt("Enter the new value for the field(if visibility, then please choose public/private):")
+let ip = [e,new_val]
+console.log(namep,ip)
+ if(new_val!=null){
+   if(sanitized_input(ip)){//sanitization of input
+    this._http.editpl(plname,e,new_val).subscribe(data =>{
+      console.log(data.result)
+
+      if(data.result=="success"){
+        window.alert("changes have been made to the playlist")
+      }
+      else{
+        window.alert("you cannot update anyone else's playlist")
+      }
+      setTimeout(()=>{this.getPlaylists()},1000)
+
+
+    });
+     }
+  
+      else{
+        window.alert("Invalid input");
+      }  
+  }
+};
   
 }
 

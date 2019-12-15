@@ -311,6 +311,37 @@ app.post("/api/secure/insertpl",jwtAuth,(req,res)=>{
 
     });
 })
+//editing a playlist
+app.post("/api/secure/editpl",jwtAuth,(req,res)=>{
+    MongoClient.connect(url, function(err,db)
+    {
+        if(err) console.log(err);
+        let db_obj =db.db("Web_proj"); 
+        if(req.body.field=="name"){
+            let query="name"
+        } 
+        else if(req.body.field=="description"){
+            let query = "description"
+        }
+        else if (req.body.field == "visibility"){
+            let query = "visibility"
+        }
+        console.log(req.body.name,req.body.field,req.body.newval)
+        db_obj.collection("Playlists").updateOne({name: {$eq:req.body.name},user:{$eq:req.username}},{$set:{[req.body.field]: req.body.newval}},function(err, result){
+            if (err) console.log(err);
+            console.log(result.modifiedCount)
+            if(result.modifiedCount>0){
+            res.send({"result": "success"});
+        }
+        else{
+            res.send({"result": "failed"});
+        }
+            db.close();
+        });
+        
+    });
+})
+
 function jwtCreate(user){
     let token = jwt.sign(user,process.env.jwt_key);
     return token;

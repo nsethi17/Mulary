@@ -135,4 +135,20 @@ export class HttpService {
 
   }
 
+  //editing a playlist
+  editpl(title,field,new_value):Observable<any>{
+    
+    let sp = {"name":title,"field":field,"newval":new_value};
+    
+    
+    return this.http.post<any>('http://localhost:1234/api/secure/editpl',sp,{
+      headers: new HttpHeaders( {
+        'Content-Type': 'application/json',
+        'Authorization':'Bearer:'+sessionStorage.getItem("access-token")
+      }),
+      observe:"body"
+    })
+
+  }
+
 }
