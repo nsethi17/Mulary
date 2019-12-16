@@ -171,9 +171,19 @@ export class SongsComponent implements OnInit, AfterViewChecked {
           this.items = Array.of(this.items)
           this.songs  =this.items[0].result
           console.log(this.songs)
+          let w = window.confirm("Want to create a playlist")
+        if(w){
+          this.newPlaylist();
+          for(let i =0; i<this.songs.length;i++){
+          this.adds2p(this.songs[i].title,this.songs[i].artist,this.songs[i].album,this.songs[i].year,this.songs[i].genre)
+          }
+          
+        }
+          
         }
 
         );
+        
       }
       else{
         window.alert("Invalid Input")
