@@ -148,7 +148,7 @@ app.get("/api/open/Songs",(req,res) =>
     if (err) console.log(err);
     let db_obj =db.db("Web_proj");
 
-    db_obj.collection("Songs").find({hidden:"false"},{projection:{_id:0}}).toArray(function(err,result){
+    db_obj.collection("Songs").find({hidden:"false"},{projection:{_id:0}}).sort({num_revs:-1}).toArray(function(err,result){
         if (err) console.log( err);
         res.send({'result':result});
         db.close();
@@ -385,7 +385,7 @@ app.get("/api/admin/Songs",(req,res) =>
     if (err) console.log(err);
     let db_obj =db.db("Web_proj");
 
-    db_obj.collection("Songs").find({},{projection:{_id:0}}).toArray(function(err,result){
+    db_obj.collection("Songs").find({},{projection:{_id:0}}).sort({num_revs:-1}).toArray(function(err,result){
         if (err) console.log( err);
         res.send({'result':result});
         db.close();

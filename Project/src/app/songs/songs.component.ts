@@ -245,7 +245,7 @@ export class SongsComponent implements OnInit, AfterViewChecked {
             if(rev){
               this.addReview(title); //adding review while adding songs 
             }
-            setInterval(()=>{this.getSongs()},1000)
+            setTimeout(()=>{this.getSongs()},1000)
           }
         })
     }
