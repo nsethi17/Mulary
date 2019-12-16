@@ -435,7 +435,7 @@ delPlaylist(){
     window.alert("Invalid Input")
   }
 }
-
+//Granting admin privileges
 newAdmin(){
   let n = window.prompt("Which user do you want to make the admin?")
   
@@ -454,6 +454,25 @@ newAdmin(){
   }
 }
 
+//Activating Deactivating user
+userActDeact(){
+  let n = window.prompt("Which user's account status do you want to change ?")
+  let c = window.prompt("Do you want to activate or deactivate the account?")
+  let ip=[c]
+  
+  if(sanitized_input(ip)&&email_validation(n)){
+    this._http.user_actdeact(n,c).subscribe(data =>{
+      if(data.result="success"){
+        window.alert(n +" has been "+c)
+      }
+
+    });
+
+  }
+  else{
+    window.alert("Invalid Input")
+  }
+}
 
 
 }

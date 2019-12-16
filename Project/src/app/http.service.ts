@@ -234,4 +234,18 @@ new_admin(n){
   })
 }
 
+//toggling user account status
+user_actdeact(n,c){
+  let sp = {"email":n,"account":c};
+  
+  
+  return this.http.post<any>('http://localhost:1234/api/admin/userActDeact',sp,{
+    headers: new HttpHeaders( {
+      'Content-Type': 'application/json',
+      'Authorization':'Bearer:'+sessionStorage.getItem("access-token")
+    }),
+    observe:"body"
+  })
+}
+
 }

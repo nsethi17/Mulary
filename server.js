@@ -77,7 +77,7 @@ app.put("/api/register",async(req,res)=>
         MongoClient.connect(url, function(err,db){
             if (err) throw err;
             let db_obj = db.db("Web_proj");
-            let new_user = {email:req.body.email, password: hashed_password ,status:"inactive", admin:"false",account:"enabled"}
+            let new_user = {email:req.body.email, password: hashed_password ,status:"inactive", admin:"false",account:"activated"}
             db_obj.collection("temp_Users").findOne({email:{$eq:new_user.email}},function(err,result){
                 if(result!=null && new_user.email == result.email)
             {   
@@ -459,6 +459,27 @@ app.post("/api/admin/newAdmin",jwtAuth,(req,res)=>{
         if(err) console.log(err);
         let db_obj =db.db("Web_proj");
         db_obj.collection("temp_Users").updateOne({email: {$eq:req.body.email}},{$set:{admin: "true"}},function(err, result){
+            if (err) console.log(err);
+            console.log(result.modifiedCount)
+            if(result.modifiedCount>0){
+            res.send({"result": "success"});
+        }
+        else{
+            res.send({"result": "failed"});
+        }
+            db.close();
+        });
+        
+    });
+})
+
+//activating/deactivating user 
+app.post("/api/admin/userActDeact",jwtAuth,(req,res)=>{
+    MongoClient.connect(url, function(err,db)
+    {
+        if(err) console.log(err);
+        let db_obj =db.db("Web_proj");
+        db_obj.collection("temp_Users").updateOne({email: {$eq:req.body.email}},{$set:{account: req.body.account}},function(err, result){
             if (err) console.log(err);
             console.log(result.modifiedCount)
             if(result.modifiedCount>0){
