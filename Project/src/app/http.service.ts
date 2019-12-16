@@ -8,19 +8,21 @@ import { Observable } from 'rxjs';
 export class HttpService {
 
   constructor(private http: HttpClient) { }
+
+
   // to get songs
   getSongs(){
     if(sessionStorage.getItem("admin")=="true"){
-      return this.http.get('http://localhost:1234/api/admin/Songs')
+      return this.http.get('http://'+ window.location.hostname+':1234/api/admin/Songs')  //dynamic urls
     }else{
-    return this.http.get('http://localhost:1234/api/open/Songs');
+    return this.http.get('http://'+ window.location.hostname+':1234/api/open/Songs');
     }
   }
 
-   // to get songs
+   // to get playlists
    getPlaylists(){
      if(sessionStorage.getItem("login_flag")=="true" && sessionStorage.getItem("admin")=="false"){
-      return this.http.get('http://localhost:1234/api/secure/Playlists',{
+      return this.http.get('http://'+ window.location.hostname+':1234/api/secure/Playlists',{
         headers: new HttpHeaders( {
           'Content-Type': 'application/json',
           'Authorization':'Bearer:'+sessionStorage.getItem("access-token")
@@ -31,7 +33,7 @@ export class HttpService {
   }
   else if(sessionStorage.getItem("login_flag")=="true" && sessionStorage.getItem("admin")=="true")
   {
-    return this.http.get('http://localhost:1234/api/admin/Playlists',{
+    return this.http.get('http://'+window.location.hostname+':1234/api/admin/Playlists',{
         headers: new HttpHeaders( {
           'Content-Type': 'application/json',
           'Authorization':'Bearer:'+sessionStorage.getItem("access-token")
@@ -42,7 +44,7 @@ export class HttpService {
 
   }
   else {
-    return this.http.get('http://localhost:1234/api/open/Playlists')
+    return this.http.get('http://'+window.location.hostname+':1234/api/open/Playlists')
   }
   }
 
@@ -51,7 +53,7 @@ export class HttpService {
     let kw: any = {};
     kw.Tags=keyword;
     
-    return this.http.post<any>('http://localhost:1234/api/open/Songs/search',kw,{
+    return this.http.post<any>('http://'+window.location.hostname+':1234/api/open/Songs/search',kw,{
       headers: new HttpHeaders( {
         'Content-Type': 'application/json'
       }),
@@ -64,7 +66,7 @@ export class HttpService {
      let s: any = {};
      s.title=song;
     console.log(song)
-    return this.http.post<any>('http://localhost:1234/api/open/review',s,{
+    return this.http.post<any>('http://'+window.location.hostname+':1234/api/open/review',s,{
       headers: new HttpHeaders( {
         'Content-Type': 'application/json'
       }),
@@ -75,7 +77,7 @@ export class HttpService {
   //to check if User exists or not
   user_login(u:any):Observable<any>{
     let user = u;
-    return this.http.post<any>('http://localhost:1234/api/login',user,{
+    return this.http.post<any>('http://'+window.location.hostname+':1234/api/login',user,{
       headers: new HttpHeaders( {
         'Content-Type': 'application/json'
       }),
@@ -87,7 +89,7 @@ export class HttpService {
   // for adding new user
   user_signup(u:any):Observable<any>{
     let user = u;
-    return this.http.put<any>('http://localhost:1234/api/register',user,{
+    return this.http.put<any>('http://'+window.location.hostname+':1234/api/register',user,{
       headers: new HttpHeaders( {
         'Content-Type': 'application/json'
       }),
@@ -99,7 +101,7 @@ export class HttpService {
 //adding reviews
   postReview(rev:any,rate:any,song:any){
     let review = {"review":rev,"rating":rate,"song":song}
-    return this.http.post<any>('http://localhost:1234/api/secure/review',review,{
+    return this.http.post<any>('http://'+window.location.hostname+':1234/api/secure/review',review,{
       headers: new HttpHeaders( {
         'Content-Type': 'application/json',
         'Authorization':'Bearer:'+sessionStorage.getItem("access-token")
@@ -112,7 +114,7 @@ export class HttpService {
 // for adding songs
   addsong(t,a,al,y,g){
     let new_song = {"title":t,"artist":a,"album":al,"year":y,"genre":g}
-    return this.http.post<any>('http://localhost:1234/api/secure/add_song',new_song,{
+    return this.http.post<any>('http://'+window.location.hostname+':1234/api/secure/add_song',new_song,{
       headers: new HttpHeaders( {
         'Content-Type': 'application/json',
         'Authorization':'Bearer:'+sessionStorage.getItem("access-token")
@@ -128,7 +130,7 @@ export class HttpService {
     }
     let new_playlist = {"name": n, "description":d,"visibility":v}
     console.log(new_playlist)
-    return this.http.put<any>('http://localhost:1234/api/secure/new_playlist',new_playlist,{
+    return this.http.put<any>('http://'+window.location.hostname+':1234/api/secure/new_playlist',new_playlist,{
       headers: new HttpHeaders( {
         'Content-Type': 'application/json',
         'Authorization':'Bearer:'+sessionStorage.getItem("access-token")
@@ -141,7 +143,7 @@ export class HttpService {
   //adding songs to a playlist
   inserttoPlaylist(name,lib):Observable<any>{
     let sp = {"name":name,"songs":lib};
-    return this.http.post<any>('http://localhost:1234/api/secure/insertpl',sp,{
+    return this.http.post<any>('http://'+window.location.hostname+':1234/api/secure/insertpl',sp,{
       headers: new HttpHeaders( {
         'Content-Type': 'application/json',
         'Authorization':'Bearer:'+sessionStorage.getItem("access-token")
@@ -157,7 +159,7 @@ export class HttpService {
     let sp = {"name":title,"field":field,"newval":new_value};
     
     
-    return this.http.post<any>('http://localhost:1234/api/secure/editpl',sp,{
+    return this.http.post<any>('http://'+window.location.hostname+':1234/api/secure/editpl',sp,{
       headers: new HttpHeaders( {
         'Content-Type': 'application/json',
         'Authorization':'Bearer:'+sessionStorage.getItem("access-token")
@@ -169,7 +171,7 @@ export class HttpService {
   //removing songs from a playlist
   removesongfrompl(name,so):Observable<any>{
     let sp = {"name":name,"song":so};
-    return this.http.post<any>('http://localhost:1234/api/secure/removesongfrompl',sp,{
+    return this.http.post<any>('http://'+window.location.hostname+':1234/api/secure/removesongfrompl',sp,{
       headers: new HttpHeaders( {
         'Content-Type': 'application/json',
         'Authorization':'Bearer:'+sessionStorage.getItem("access-token")
@@ -185,7 +187,7 @@ export class HttpService {
     let sp = {"name":n,"field":att,"newval":new_val};
     
     
-    return this.http.post<any>('http://localhost:1234/api/admin/modifySong',sp,{
+    return this.http.post<any>('http://'+window.location.hostname+':1234/api/admin/modifySong',sp,{
       headers: new HttpHeaders( {
         'Content-Type': 'application/json',
         'Authorization':'Bearer:'+sessionStorage.getItem("access-token")
@@ -198,7 +200,7 @@ del_song(n){
   let sp = {"name":n};
   
   
-  return this.http.post<any>('http://localhost:1234/api/admin/deleteSong',sp,{
+  return this.http.post<any>('http://'+window.location.hostname+':1234/api/admin/deleteSong',sp,{
     headers: new HttpHeaders( {
       'Content-Type': 'application/json',
       'Authorization':'Bearer:'+sessionStorage.getItem("access-token")
@@ -211,7 +213,7 @@ del_playlist(n){
   let sp = {"name":n};
   
   
-  return this.http.post<any>('http://localhost:1234/api/admin/deletePlaylist',sp,{
+  return this.http.post<any>('http://'+window.location.hostname+':1234/api/admin/deletePlaylist',sp,{
     headers: new HttpHeaders( {
       'Content-Type': 'application/json',
       'Authorization':'Bearer:'+sessionStorage.getItem("access-token")
@@ -225,7 +227,7 @@ new_admin(n){
   let sp = {"email":n};
   
   
-  return this.http.post<any>('http://localhost:1234/api/admin/newAdmin',sp,{
+  return this.http.post<any>('http://'+window.location.hostname+':1234/api/admin/newAdmin',sp,{
     headers: new HttpHeaders( {
       'Content-Type': 'application/json',
       'Authorization':'Bearer:'+sessionStorage.getItem("access-token")
@@ -239,7 +241,7 @@ user_actdeact(n,c){
   let sp = {"email":n,"account":c};
   
   
-  return this.http.post<any>('http://localhost:1234/api/admin/userActDeact',sp,{
+  return this.http.post<any>('http://'+window.location.hostname+':1234/api/admin/userActDeact',sp,{
     headers: new HttpHeaders( {
       'Content-Type': 'application/json',
       'Authorization':'Bearer:'+sessionStorage.getItem("access-token")

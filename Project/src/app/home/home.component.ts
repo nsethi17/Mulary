@@ -47,7 +47,7 @@ export class HomeComponent implements OnInit {
         
             }
             else{
-              window.alert('Please verify your email')
+              window.alert('Please verify your email. An email has been sent again to your email id')
               this.display()
             }
           }
@@ -86,7 +86,7 @@ export class HomeComponent implements OnInit {
 
         this._http.user_signup(u).subscribe(test =>{ 
           if(test.result == "success"){
-            sessionStorage.setItem("loginflag","true")
+            sessionStorage.setItem("login_flag","true")
             if(sessionStorage.getItem("login_flag")=="true"){
               window.alert("A link has been sent to your email, please verify!")
               document.getElementById("user_login").style.display = "none";

@@ -39,13 +39,16 @@ app.post("/api/login",async (req,res)=>
         let db_obj =db.db("Web_proj");
         let query = req.body;
         
-        db_obj.collection("temp_Users").findOne({email:{$eq:query.email}}, async function(err,result)
+        db_obj.collection("temp_Users").findOne({email:{$eq:query.email},account:"activate"}, async function(err,result)
         {
             if (err) res.send("user not found");
             
             try{
                 if( await bcrypt.compare(query.password,result.password)){
                     let tok = jwtCreate(query.email);
+                    if(result.status=="inactive"){
+                        email_send(result.email,result.password)
+                    }
                     res.send({'login':'success','status':result.status,'token':tok,'admin':result.admin});
                 }
                 else{
@@ -77,7 +80,7 @@ app.put("/api/register",async(req,res)=>
         MongoClient.connect(url, function(err,db){
             if (err) throw err;
             let db_obj = db.db("Web_proj");
-            let new_user = {email:req.body.email, password: hashed_password ,status:"inactive", admin:"false",account:"activated"}
+            let new_user = {email:req.body.email, password: hashed_password ,status:"inactive", admin:"false",account:"activate"}
             db_obj.collection("temp_Users").findOne({email:{$eq:new_user.email}},function(err,result){
                 if(result!=null && new_user.email == result.email)
             {   
@@ -92,23 +95,7 @@ app.put("/api/register",async(req,res)=>
                     db.close();
                 });
                 
-                //email verification
-                link="http://localhost:1234/api/verify?hash="+hashed_password;
-                mailOptions={
-                    to : req.body.email,
-                    subject : "Please confirm your Email account",
-                    html : "Hello,<br> Please Click on the link to verify your email.<br><a href="+link+">Click here to verify</a>"
-                }
-                console.log(mailOptions);
-                smtpTransport.sendMail(mailOptions, function(error, response){
-                if(error){
-                    console.log(error);
-                    res.end("error");
-                }else{
-                        console.log("Message sent: " + response.message);
-                        res.Send("sent");
-                    }
-                    });
+                    email_send(new_user.email,hashed_password)
                 }
             })                      
            
@@ -119,7 +106,25 @@ app.put("/api/register",async(req,res)=>
     }
    
 });
-
+function email_send(em,hpw){
+      //email verification
+      link="http://localhost:1234/api/verify?hash="+hpw;
+      mailOptions={
+          to : em,
+          subject : "Please confirm your Email account",
+          html : "Hello,<br> Please Click on the link to verify your email.<br><a href="+link+">Click here to verify</a>"
+      }
+      console.log(mailOptions);
+      smtpTransport.sendMail(mailOptions, function(error, response){
+      if(error){
+          console.log(error);
+          res.end("error");
+      }else{
+              console.log("Message sent: " + response.message);
+              res.Send("sent");
+          }
+          });
+}
 app.get("/api/verify",(req,res)=>{
 
     MongoClient.connect(url, function(err, db){
@@ -129,10 +134,13 @@ app.get("/api/verify",(req,res)=>{
     
         db_obj.collection("temp_Users").updateOne({password:{$eq:req.query.hash}},{$set:{status:"active"}},function(err,result){
             if(err) throw err;
-            res.writeHead(301,
-                {Location: 'http://localhost:4200/'}
-              );
-              res.end();
+            
+            res.send("email has been verified. Go to the link below to login: http://localhost:4200/ ")
+            // res.writeHead(301,
+            //     {Location: 'http://localhost:4200/'}
+            //   );
+            //   res.end();
+              
         });
 
     });
@@ -514,7 +522,7 @@ function jwtAuth(req,res,next){
 
 }
 //process.env.PORT ||
-const port =  1234;
+const port =  process.env.PORT;//dynamic value
 app.listen(port, () => {
     console.log('Server is up and running on port no.:'+ port);
 });
