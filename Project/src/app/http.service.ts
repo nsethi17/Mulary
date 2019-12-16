@@ -206,5 +206,18 @@ del_song(n){
     observe:"body"
   })
 }
+//deleting a playlist
+del_playlist(n){
+  let sp = {"name":n};
+  
+  
+  return this.http.post<any>('http://localhost:1234/api/admin/deletePlaylist',sp,{
+    headers: new HttpHeaders( {
+      'Content-Type': 'application/json',
+      'Authorization':'Bearer:'+sessionStorage.getItem("access-token")
+    }),
+    observe:"body"
+  })
+}
 
 }

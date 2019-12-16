@@ -77,7 +77,7 @@ app.put("/api/register",async(req,res)=>
         MongoClient.connect(url, function(err,db){
             if (err) throw err;
             let db_obj = db.db("Web_proj");
-            let new_user = {email:req.body.email, password: hashed_password ,status:"inactive", admin:"false"}
+            let new_user = {email:req.body.email, password: hashed_password ,status:"inactive", admin:"false",account:"enabled"}
             db_obj.collection("temp_Users").findOne({email:{$eq:new_user.email}},function(err,result){
                 if(result!=null && new_user.email == result.email)
             {   
@@ -434,6 +434,23 @@ app.post("/api/admin/deleteSong",jwtAuth,(req,res)=>{
     });
 })
 
+//deleting a playlist
+app.post("/api/admin/deletePlaylist",jwtAuth,(req,res)=>{
+    MongoClient.connect(url, function(err,db)
+    {
+        if(err) console.log(err);
+        let db_obj =db.db("Web_proj");  
+        db_obj.collection("Playlists").deleteOne({name:req.body.name},function(err, result){
+            if (err) console.log(err);
+            res.send({"result": "success"});     
+            db.close();
+        });
+        
+
+      
+
+    });
+})
 
 
 

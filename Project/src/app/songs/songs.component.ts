@@ -416,6 +416,27 @@ delSong(){
   }
 } 
 
+//deleting a playlist
+delPlaylist(){
+  let n = window.prompt("Which playlist do you want to delete?")
+  
+  let ip =[n]
+  if(sanitized_input(ip)){
+    this._http.del_playlist(n).subscribe(data =>{
+      if(data.result="success"){
+        window.alert("Playlist has been deleted")
+      }
+      setTimeout(()=>{this.getPlaylists()},1000)
+
+    });
+
+  }
+  else{
+    window.alert("Invalid Input")
+  }
+}
+
+
 }
 
 
