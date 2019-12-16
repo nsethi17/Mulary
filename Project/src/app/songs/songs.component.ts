@@ -436,6 +436,25 @@ delPlaylist(){
   }
 }
 
+newAdmin(){
+  let n = window.prompt("Which user do you want to make the admin?")
+  
+  
+  if(email_validation(n)){
+    this._http.new_admin(n).subscribe(data =>{
+      if(data.result="success"){
+        window.alert(n +" is now an Admin")
+      }
+
+    });
+
+  }
+  else{
+    window.alert("Invalid Input")
+  }
+}
+
+
 
 }
 
@@ -462,7 +481,19 @@ if(count == ip.length){
     return false;
   }
 }
+//
+function email_validation(email){
+  //username sanitization
+var eregex=/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; 
 
+  if (email!=="" && Boolean(email.match(eregex))){
+    return true;
+}
+  else{
+    alert("You have entered an invalid email address!");
+    return false;
+}
+}
   
 
 

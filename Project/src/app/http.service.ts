@@ -220,4 +220,18 @@ del_playlist(n){
   })
 }
 
+//Granting admin priv
+new_admin(n){
+  let sp = {"email":n};
+  
+  
+  return this.http.post<any>('http://localhost:1234/api/admin/newAdmin',sp,{
+    headers: new HttpHeaders( {
+      'Content-Type': 'application/json',
+      'Authorization':'Bearer:'+sessionStorage.getItem("access-token")
+    }),
+    observe:"body"
+  })
+}
+
 }

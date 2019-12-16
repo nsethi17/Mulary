@@ -452,6 +452,26 @@ app.post("/api/admin/deletePlaylist",jwtAuth,(req,res)=>{
     });
 })
 
+//granting admin rights 
+app.post("/api/admin/newAdmin",jwtAuth,(req,res)=>{
+    MongoClient.connect(url, function(err,db)
+    {
+        if(err) console.log(err);
+        let db_obj =db.db("Web_proj");
+        db_obj.collection("temp_Users").updateOne({email: {$eq:req.body.email}},{$set:{admin: "true"}},function(err, result){
+            if (err) console.log(err);
+            console.log(result.modifiedCount)
+            if(result.modifiedCount>0){
+            res.send({"result": "success"});
+        }
+        else{
+            res.send({"result": "failed"});
+        }
+            db.close();
+        });
+        
+    });
+})
 
 
 function jwtCreate(user){
