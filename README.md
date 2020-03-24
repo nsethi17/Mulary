@@ -1,1 +1,1 @@
-# ece9065-nsethi8-project
+# Mulary - A website where you can add songs, create playlists and review songs. 
